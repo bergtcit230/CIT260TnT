@@ -1,0 +1,74 @@
+package Week11;
+import java.util.Scanner;
+import java.io.*;
+import java.io.PrintWriter;
+
+/**
+ * This program gets ten numbers from the user
+ * saves numbers to a file and reads them again
+ * then computes and displays the average.
+ *
+ *  Asks the user to enter in 10 integer values. If a non-integer value is entered, your program should display an error message and re-prompt the user to enter that value.
+ *
+ *  Opens a file named data.txt. If the file does not exist, your program should create it. If the file cannot be opened, an error message is displayed and the program terminates.
+ *
+ */
+
+
+public class Main {
+
+    public static void main(String[] args)throws IOException {
+        int range = 10;
+        int[] intArray = new int[range];
+        System.out.printf("This program gets ten numbers from the user, and%n" +
+                "computes and displays the average.%n" + "%nPlease enter ten integer values.%n");
+        for (int i=0;i<range;i++) {
+            System.out.printf("Enter integer %d: ",i+1);
+            int number = 0; // reset the number value
+            try {
+                Scanner input = new Scanner(System.in);
+                number = input.nextInt();
+                intArray[i]=number;
+            }
+            catch (Exception e){
+                System.out.print("Error: input must be an integer.\n");
+                i = i-1; // don't iterate in the Array w/o valid input
+            }
+        }
+        File myFile = new File("data.txt");
+        int i=0;
+        double total= 0;
+        try (PrintWriter pw = new PrintWriter(myFile)) {
+            while (i<intArray.length) {
+                pw.println(intArray[i]);
+                total += intArray[i];
+                i++;
+            }
+        }catch (Exception e) {
+           System.out.print("error writing to a file\n");
+            throw e;
+        }
+        i=0;
+        int[] newIntArray = new int[range];
+        File readFile = new File("data.txt");
+        try (Scanner input = new Scanner(readFile)) {
+            while(input.hasNextLine()) { //checks to see if there is a line of input to read
+                String line = input.nextLine().trim();
+                int value = Integer.parseInt(line);
+                newIntArray[i]=value;
+                i++;
+            }
+        }catch(Exception e){
+            System.out.print(e.getMessage()+"Error reading from a file\n");
+            throw e;
+        }
+
+        while (i<newIntArray.length) {
+            total += newIntArray[i];
+            i++;
+        }
+        double avg = total / intArray.length;
+        System.out.printf("The average of the input values is %.2f", avg);
+        System.out.printf("%nGoodbye...");
+    }
+}
